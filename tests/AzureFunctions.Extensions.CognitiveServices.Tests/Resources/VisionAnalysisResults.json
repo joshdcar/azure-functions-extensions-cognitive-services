@@ -1,0 +1,24 @@
+﻿{
+  "tags": [
+    {
+      "name": "outdoor",
+      "score": 0.976
+    },
+    {
+      "name": "bird",
+      "score": 0.95
+    }
+  ],
+  "description": {
+    "tags": [
+      "outdoor",
+      "bird"
+    ],
+    "captions": [
+      {
+        "text": "partridge in a pear tree",
+        "confidence": 0.96
+      }
+    ]
+  }
+}

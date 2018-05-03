@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{71539E00-8C5F-4B45-AA0D-B83CAC58FCA4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureFunctions.Extensions.CognitiveServices.Tests", "tests\AzureFunctions.Extensions.CognitiveServices.Tests\AzureFunctions.Extensions.CognitiveServices.Tests.csproj", "{2A1C49A1-48FA-416B-98DA-F5422313D211}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{862626B4-433B-4FA4-96DC-815850960814}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureFunctions.Extensions.CognitiveServics.Samples", "samples\AzureFunctions.Extensions.CognitiveServics.Samples\AzureFunctions.Extensions.CognitiveServics.Samples.csproj", "{78916DA5-CFEC-40B5-84A6-B0190B076700}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9936F693-95E7-48C4-ADC3-3FFCBC654587}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureFunctions.Extensions.CognitiveServices", "src\AzureFunctions.Extensions.CognitiveServices\AzureFunctions.Extensions.CognitiveServices.csproj", "{90EED71C-45C7-4952-818B-3643A3E906B9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3F518617-3B7F-44DD-B6C3-51A55FA76D5C}"
+	ProjectSection(SolutionItems) = preProject
+		logo.png = logo.png
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2A1C49A1-48FA-416B-98DA-F5422313D211}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A1C49A1-48FA-416B-98DA-F5422313D211}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A1C49A1-48FA-416B-98DA-F5422313D211}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A1C49A1-48FA-416B-98DA-F5422313D211}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78916DA5-CFEC-40B5-84A6-B0190B076700}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78916DA5-CFEC-40B5-84A6-B0190B076700}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78916DA5-CFEC-40B5-84A6-B0190B076700}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78916DA5-CFEC-40B5-84A6-B0190B076700}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90EED71C-45C7-4952-818B-3643A3E906B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90EED71C-45C7-4952-818B-3643A3E906B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90EED71C-45C7-4952-818B-3643A3E906B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90EED71C-45C7-4952-818B-3643A3E906B9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2A1C49A1-48FA-416B-98DA-F5422313D211} = {71539E00-8C5F-4B45-AA0D-B83CAC58FCA4}
+		{78916DA5-CFEC-40B5-84A6-B0190B076700} = {862626B4-433B-4FA4-96DC-815850960814}
+		{90EED71C-45C7-4952-818B-3643A3E906B9} = {9936F693-95E7-48C4-ADC3-3FFCBC654587}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {49F1B715-24A3-4580-BA87-34ED114ED2B8}
+	EndGlobalSection
+EndGlobal
