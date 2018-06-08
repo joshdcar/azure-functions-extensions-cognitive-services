@@ -15,6 +15,10 @@ Azure Function Extensions for Cognitive Services is a set of custom Azure Functi
 
 Added support for the remainder of the Vision offerings and additional support for Language and Knowledge will be coming very soon. More details on the various Cognitive Services offerings can be found at [https://azure.microsoft.com/en-us/services/cognitive-services/](https://azure.microsoft.com/en-us/services/cognitive-services/)
 
+### Getting Started Video
+
+[![Alt text](https://img.youtube.com/vi/GlCuPuj0Nk4/0.jpg)](https://www.youtube.com/watch?v=GlCuPuj0Nk4)
+
 ### Current Version
 
 Latest Version: 1.0.0-preview1 
