@@ -24,8 +24,13 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
         public Task<ServiceResultModel> PostAsync(string uri, string key, StringContent content, ReturnType returnType)
         {
             ServiceResultModel result = null;
-            
-            if(uri.Contains("vision") == true)
+
+            if (uri.Contains("analyze") == true)
+            {
+                result = new ServiceResultModel { HttpStatusCode = 200, Contents = MockResults.VisionAnalysisResults };
+            }
+
+            if (uri.Contains("vision") == true)
             {
                 result =  new ServiceResultModel { HttpStatusCode = 200, Contents = MockResults.VisionAnalysisResults };
             }
@@ -33,6 +38,12 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             if (uri.Contains("describe") == true)
             {
                 result = new ServiceResultModel { HttpStatusCode = 200, Contents = MockResults.VisionDescribeResults };
+            }
+
+            if (returnType == ReturnType.Binary)
+            {
+                result = new ServiceResultModel { HttpStatusCode = 200, Binary = MockResults.SamplePhoto };
+
             }
 
             return Task.FromResult<ServiceResultModel>(result);
@@ -44,6 +55,11 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
 
             if (returnType == ReturnType.String)
             {
+                if (uri.Contains("analyze") == true)
+                {
+                    result = new ServiceResultModel { HttpStatusCode = 200, Contents = MockResults.VisionAnalysisResults };
+                }
+
                 if (uri.Contains("vision") == true)
                 {
                     result = new ServiceResultModel { HttpStatusCode = 200, Contents = MockResults.VisionAnalysisResults };

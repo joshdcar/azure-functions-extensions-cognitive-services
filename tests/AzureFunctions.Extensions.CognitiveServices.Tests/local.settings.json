@@ -3,6 +3,7 @@
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
     "AzureWebJobsDashboard": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
     "VisionKey": "XXXXXXXXXXXXXXXXXXXXXX",
     "VisionUrl": "XXXXXXXXXXXXXXXXXXXXXX"
   }
