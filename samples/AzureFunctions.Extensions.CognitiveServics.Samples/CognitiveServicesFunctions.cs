@@ -113,7 +113,7 @@ namespace AzureFunctions.Extensions.CognitiveServics.Samples
 
         }
 
-        [FunctionName("VisionDesribeBlobFunction")]
+        [FunctionName("VisionDescribeModelBlobFunction")]
         public static async Task VisionDescribeModelBlobFunction(
             [BlobTrigger("describe/{name}")]Stream storageBlob,
             [Table("VisionResults")]IAsyncCollector<VisionResult> results,
