@@ -17,11 +17,11 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Handwritin
 {
     public class VisionHandwritingClient
     {
-        CognitiveServicesConfiguration _config;
+        IVisionBinding _config;
         VisionHandwritingAttribute _attr;
         ILogger _log;
 
-        public VisionHandwritingClient(CognitiveServicesConfiguration config, VisionHandwritingAttribute attr, ILoggerFactory loggerFactory)
+        public VisionHandwritingClient(IVisionBinding config, VisionHandwritingAttribute attr, ILoggerFactory loggerFactory)
         {
             this._config = config;
             this._attr = attr;
@@ -41,6 +41,13 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Handwritin
                 {
                     _log.LogWarning(VisionExceptionMessages.FileMissing);
                     throw new ArgumentException(VisionExceptionMessages.FileMissing);
+                }
+
+
+                if (ImageResizeService.IsImage(visionOperation.ImageBytes) == false)
+                {
+                    _log.LogWarning(VisionExceptionMessages.InvalidFileType);
+                    throw new ArgumentException(VisionExceptionMessages.InvalidFileType);
                 }
 
                 if (visionOperation.Oversized == true && visionOperation.AutoResize == false)
@@ -208,13 +215,13 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Handwritin
 
         }
 
-        private async Task<VisionHandwritingRequest> MergeProperties(VisionHandwritingRequest operation, CognitiveServicesConfiguration config, VisionHandwritingAttribute attr)
+        private async Task<VisionHandwritingRequest> MergeProperties(VisionHandwritingRequest operation, IVisionBinding config, VisionHandwritingAttribute attr)
         {
 
             var visionOperation = new VisionHandwritingRequest
             {
-                Url = attr.Url ?? operation.Url,
-                Key = attr.Key ?? operation.Key,
+                Url = attr.VisionUrl ?? operation.Url,
+                Key = attr.VisionKey ?? operation.Key,
                 SecureKey = attr.SecureKey ?? attr.SecureKey,
                 AutoResize = attr.AutoResize,
                 ImageUrl = string.IsNullOrEmpty(operation.ImageUrl) ? attr.ImageUrl : operation.ImageUrl,

@@ -15,11 +15,11 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Ocr
 {
     public class VisionOcrClient
     {
-        CognitiveServicesConfiguration _config;
+        IVisionBinding _config;
         VisionOcrAttribute _attr;
         ILogger _log;
 
-        public VisionOcrClient(CognitiveServicesConfiguration config, VisionOcrAttribute attr, ILoggerFactory loggerFactory)
+        public VisionOcrClient(IVisionBinding config, VisionOcrAttribute attr, ILoggerFactory loggerFactory)
         {
             this._config = config;
             this._attr = attr;
@@ -39,6 +39,13 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Ocr
                 {
                     _log.LogWarning(VisionExceptionMessages.FileMissing);
                     throw new ArgumentException(VisionExceptionMessages.FileMissing);
+                }
+
+
+                if (ImageResizeService.IsImage(visionOperation.ImageBytes) == false)
+                {
+                    _log.LogWarning(VisionExceptionMessages.InvalidFileType);
+                    throw new ArgumentException(VisionExceptionMessages.InvalidFileType);
                 }
 
                 if (visionOperation.Oversized == true && visionOperation.AutoResize == false)
@@ -142,13 +149,13 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Ocr
 
         }
 
-        private async Task<VisionOcrRequest> MergeProperties(VisionOcrRequest operation, CognitiveServicesConfiguration config, VisionOcrAttribute attr)
+        private async Task<VisionOcrRequest> MergeProperties(VisionOcrRequest operation, IVisionBinding config, VisionOcrAttribute attr)
         {
 
             var visionOperation = new VisionOcrRequest
             {
-                Url = attr.Url ?? operation.Url,
-                Key = attr.Key ?? operation.Key,
+                Url = attr.VisionUrl ?? operation.Url,
+                Key = attr.VisionKey ?? operation.Key,
                 SecureKey = attr.SecureKey ?? attr.SecureKey,
                 AutoResize = attr.AutoResize,
                 ImageUrl = string.IsNullOrEmpty(operation.ImageUrl) ? attr.ImageUrl : operation.ImageUrl,

@@ -21,7 +21,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
         {
             ICognitiveServicesClient client = new TestCognitiveServicesClient();
   
-            await TestHelper.ExecuteFunction<VisionFunctions>(client, "VisionFunctions.VisionThumbnailWithUrl");
+            await TestHelper.ExecuteFunction<VisionFunctions, VisionThumbnailBinding>(client, "VisionFunctions.VisionThumbnailWithUrl");
 
             Assert.Equal(MockResults.SamplePhoto.Length, visionThumbnailResult.Length);
         }
@@ -31,7 +31,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
         {
             ICognitiveServicesClient client = new TestCognitiveServicesClient();
            
-            await TestHelper.ExecuteFunction<VisionFunctions>(client, "VisionFunctions.VisionThumbnailWithImageBytes");
+            await TestHelper.ExecuteFunction<VisionFunctions, VisionThumbnailBinding>(client, "VisionFunctions.VisionThumbnailWithImageBytes");
 
             Assert.Equal(MockResults.SamplePhoto.Length, visionThumbnailResult.Length);
         }
@@ -41,7 +41,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
         {
             ICognitiveServicesClient client = new TestCognitiveServicesClient();
 
-            await TestHelper.ExecuteFunction<VisionFunctions>(client, "VisionFunctions.VisionThumbnailWithTooBigImageBytesWithResize");
+            await TestHelper.ExecuteFunction<VisionFunctions, VisionThumbnailBinding>(client, "VisionFunctions.VisionThumbnailWithTooBigImageBytesWithResize");
 
             Assert.Equal(MockResults.SamplePhoto.Length, visionThumbnailResult.Length);
 
@@ -54,7 +54,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
 
             string exceptionMessage = "or smaller for the cognitive service vision API";
 
-            var exception = await Record.ExceptionAsync(() => TestHelper.ExecuteFunction<VisionFunctions>
+            var exception = await Record.ExceptionAsync(() => TestHelper.ExecuteFunction<VisionFunctions, VisionThumbnailBinding>
                         (client, "VisionFunctions.VisionThumbnailWithTooBigImageBytes"));
 
             exception.Should().NotBeNull();
@@ -69,7 +69,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
         {
             ICognitiveServicesClient client = new TestCognitiveServicesClient();
 
-            var exception = await Record.ExceptionAsync(() => TestHelper.ExecuteFunction<VisionFunctions>
+            var exception = await Record.ExceptionAsync(() => TestHelper.ExecuteFunction<VisionFunctions, VisionThumbnailBinding>
                         (client, "VisionFunctions.VisionThumbnailMissingFile"));
 
             exception.Should().NotBeNull();
@@ -83,7 +83,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
         {
 
             public async Task VisionThumbnailWithUrl(
-                [VisionThumbnail(Url = "%VisionUrl%", Key ="%VisionKey%", Width ="100", Height="100")]
+                [VisionThumbnail(VisionUrl = "%VisionUrl%", VisionKey ="%VisionKey%", Width ="100", Height="100")]
                  VisionThumbnailClient client)
             {
                 var request = new VisionThumbnailRequest();
@@ -95,7 +95,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionThumbnailWithImageBytes(
-                [VisionThumbnail(Url = "%VisionUrl%", Key ="%VisionKey%", Width ="100", Height="100")]
+                [VisionThumbnail(VisionUrl = "%VisionUrl%", VisionKey ="%VisionKey%", Width ="100", Height="100")]
                  VisionThumbnailClient client)
             {
                 var request = new VisionThumbnailRequest();
@@ -107,7 +107,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionThumbnailWithTooBigImageBytes(
-                [VisionThumbnail(Url = "%VisionUrl%", Key ="%VisionKey%", Width ="100", Height="100")]
+                [VisionThumbnail(VisionUrl = "%VisionUrl%", VisionKey ="%VisionKey%", AutoResize = false,  Width ="100", Height="100")]
                  VisionThumbnailClient client)
             {
 
@@ -119,7 +119,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionThumbnailWithTooBigImageBytesWithResize(
-                [VisionThumbnail(Url = "%VisionUrl%", Key = "%VisionKey%", AutoResize = true, Width ="100", Height="100")]
+                [VisionThumbnail(VisionUrl = "%VisionUrl%", VisionKey = "%VisionKey%", AutoResize = true, Width ="100", Height="100")]
                  VisionThumbnailClient client)
             {
 
@@ -133,7 +133,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionThumbnailMissingFile(
-                [VisionThumbnail(Url = "%VisionUrl%", Key ="%VisionKey%", Width ="100", Height="100")]
+                [VisionThumbnail(VisionUrl = "%VisionUrl%", VisionKey ="%VisionKey%", Width ="100", Height="100")]
                  VisionThumbnailClient client)
             {
 
@@ -144,7 +144,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionThumbnailKeyvault(
-                [VisionThumbnail(Url = "%VisionUrl%", Key ="[VisionKey]", Width ="100", Height="100")]
+                [VisionThumbnail(VisionUrl = "%VisionUrl%", VisionKey ="[VisionKey]", Width ="100", Height="100")]
                  VisionThumbnailClient client)
             {
 

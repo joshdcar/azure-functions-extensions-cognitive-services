@@ -13,6 +13,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Config
     public static class VisionExceptionMessages
     {
         public const string CognitiveServicesException = "The following exception was returned from Cognitive Services. Code: {0} Message: {1}";
+        public const string InvalidFileType = "The file type you provided is not valid. Only jpg, gif, bmp, and png are supported.";
         public const string FileMissing = "Image File Missing";
         public const string FileTooLarge = "Files must be {0} mb or smaller for the cognitive service vision API. Your file size is {1} bytes.";
         public const string FileTooLargeAfterResize = "Files must be {0} mb or smaller for the cognitive service vision API. After an autoresize attempt your file is still too large at {1} bytes.";
