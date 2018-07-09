@@ -4,16 +4,20 @@ Azure Function Extensions for Cognitive Services is a set of custom Azure Functi
 
 ### Features:
 
- - Supports a subset of the Computer Vision API including Image Analysis, Optical Character Recognition (OCR), Handwriting, Celebrities & Landmarks, and Thumbnail generation.
+ - Supports a subset of the Computer Vision API including 
+   - Image Analysis
+   - Optical Character Recognition (OCR)
+   - Handwriting, Celebrities & Landmarks, 
+   - Thumbnail generation.
  - Cognitive Service API calls with a couple lines of code
  - Support for automatic retry policies for throttled requests
- - Support for automatic image resize for files larger then 4mb (Cognitive Services Limit) ***
+ - Support for automatic image resize for files larger then 4mb (Cognitive Services Limit)
  - Support for Key Vault storage of Cognitive Services Keys
  - Exception, Warning, and request time metrics logging
 
-*** Automatic resize is currently disabled due to binding conflicts with Azure Functions 2.0 and dependencies of the ImageSharp library used for resizing. We hope to resolve this prior to GA.
+Additional support for the remainder of the Vision offerings and additional support for Language and Knowledge will be coming very soon. 
 
-Added support for the remainder of the Vision offerings and additional support for Language and Knowledge will be coming very soon. More details on the various Cognitive Services offerings can be found at [https://azure.microsoft.com/en-us/services/cognitive-services/](https://azure.microsoft.com/en-us/services/cognitive-services/)
+More details on the various Cognitive Services offerings can be found at [https://azure.microsoft.com/en-us/services/cognitive-services/](https://azure.microsoft.com/en-us/services/cognitive-services/)
 
 ### Getting Started Video
 
@@ -21,7 +25,7 @@ Added support for the remainder of the Vision offerings and additional support f
 
 ### Current Version
 
-Latest Version: 1.0.0-preview1 
+Latest Version: 1.0.0-preview2 
 
 Current Azure Function Dependency:  Microsoft.Azure.Webjobs.Extensions (3.0.0-beta5)
 
@@ -40,8 +44,7 @@ Nuget Package Available at AzureFunctions.Extensions.CognitiveServices (https://
 
 ### Language Support
 
-This library has only been tested with C#. I do plan to ensure support for other Language options
-with Azure Functions such as Javascript.
+This library has only been tested with C#. Other language support will be validated\added soon. 
 
 ### Configuration
 
@@ -66,54 +69,129 @@ providing direct client id and secrets for Azure AD Applications.
 
 ### General Usage Guidelines
 
-Attributes are currently bound to their corresponding client class.  All attributes share a common set of properties
-that can be set at the attribute level including Key, Url, and AutoResize**. Each binding also has options and properties
-that are unique to that particular Cognitive Services. Additionally attributes values can be customized
-and/or overwritten at the request level as well.  This can be advantages if you want additional logic to decide on request
-details vs the limited number of assignment and logical operation options available at the attribute level.  All assignments at the request
-level will override any values set at at the attribute level.
+These extensions support numerouse combinations of bindings for each service available in cognitive services. The available binding and their associated behaviors depend 
+on the Image Source provided within the binding attribute. 
+
+The following bindings are supported.
+
+| Image Source | Model Binding | Client Binding |
+| ------------ | :-----------: | :------------: |
+| Client (default)       |               |        x       |
+| BlobStorage  |       X       |        x       |
+| Url          |       X       |        x       |
+
+
+#### Model Class Binding
+
+Model Binding is the fastest and simples way to automatically analyze a given image. It requires and image source
+to be available at the time of binding so a given cognitive services query can be immediatly executed. Because of this
+it only supports BlobStorage and Url sources.  Blob Storage has the additional requirement of a connection and path. 
+
+
+```
+...
+[VisionAnalysis(BlobStorageConnection = "storageaccount",
+                BlobStoragePath = "analysismodel/{name}",
+                ImageSource = ImageSource.BlobStorage)]VisionAnalysisModel result,
+string name
+...
+```
+
+It is often advantageous to us these extensions in combination with a blob trigger where the name parameter
+is provided by the Blob Trigger and the path and connection is already known.
+
+```
+ [BlobTrigger("analysismodel/{name}")]Stream storageBlob,
+ [VisionAnalysis(BlobStorageConnection = "%storageaccount%",
+                           BlobStoragePath = "analysismodel/{name}",
+                           ImageSource = ImageSource.BlobStorage)]VisionAnalysisModel result,
+ string name,
+
+```
+
+Each Vision Binding has one or more corresponding models  available:
+
+| Vision Binding   | Model(s)      |
+| ------------      | :----------- |
+| VisionAnalysis    | VisionAnalysisModel         |   
+| VisionDescribe    | VisionDescribeModel             |       
+| VisionDomain      | VisionDomainCelebrityModel, VisionDomainLandmarkModel              |   
+| VisionHandwriting | VisionHandwritingModel              | 
+| VisionOcr         | VisionOcrModel              | 
+| VisionThumbnail   | Byte[]              | 
+
+#### Client Binding
+
+If your image source meets one of the following criteria then working with a Vision Client may be more usefull:
+
+- Your image is not available in Blob Storage or in a publically accessible URL
+- Your image is not available at binding time
+- Your image is in an external source that requires a seperate request
+- You want to modify your image (beyond resize) before processing
+- You do not want to use the default processing options for a given request. 
+
+Due to the unique requirements of each cognitive service each vision binding has a dedicated vision client and vision request object.
+
+The following client and requests classes are available for each binding
+
+| Vision Binding   | Client      | Request   |
+| ------------      | :----------- |:----------- |
+| VisionAnalysis    | VisionAnalysisClient      |   VisionAnalysisRequest | 
+| VisionDescribe    | VisionDescribeClient      |   VisionDescribeRequest |  
+| VisionDomain      | VisionDomainClient        |   VisionDomainRequest |  
+| VisionHandwriting | VisionHandwritingClient   |   VisionHandwritingRequest |  
+| VisionOcr         | VisionOcrClient           |   VisionOcrRequest |  
+| VisionThumbnail   | VisionThumbnailClient     |   VisionThumbnailRequest |  
+
 
 Binding example with VisionAnalysis Attribute and VisionAnalysisClient binding:
 
 ```
-[VisionAnalysis(Key = "%VisionKey%", Url = "%VisionUrl%")]VisionAnalysisClient visionclient,
+...
+[VisionAnalysis()]VisionAnalysisClient visionclient,
+... {
 
-```
+    byte[] fileBytes = FetchMyFile();
 
-
-Request example w/ VisionAnalysisRequest:
-
-```
-    var result = await visionclient.AnalyzeAsync(new VisionAnalysisRequest(storageBlob));
-```
-
-Request example w/ additional and overriding property values:
-
-```
     //Instantiate a new request
-    var request = new VisionAnalysisRequest(storageBlob);
+    var request = new VisionAnalysisRequest(fileBytes);
     request.AutoResize = true;
-
-    //Specify an alternate url\key - usefull if you have multiple accounts use for different clients\scenerios
-    request.Url = "http://xxxxxxx";
-    request.Key = "XXXXXXXX";
 
     //Set unique analysis options for the request
     request.Options = VisionAnalysisOptions.Categories | VisionAnalysisOptions.Description | VisionAnalysisOptions.Tags;
 
+    //Make the request
     var result = await visionclient.AnalyzeAsync(request);
+
+}
 
 ```
 
-** AutoResize is currently disabled due to beta assembly binding issues.
 
 ### Current Azure Function Extensions for Cognitive Services Bindings
 
 #### VisionAnalysis
+
+##### Model Binding Example
 ```
 public static async Task Run(
-		   [BlobTrigger("visionrequest/{name}")]Stream storageBlob,
-           [VisionAnalysis(Key = "%VisionKey%", Url = "%VisionUrl%")]VisionAnalysisClient visionclient,
+    [BlobTrigger("visionrequest/{name}")]Stream storageBlob,
+    [VisionAnalysis(BlobStorageConnection = "%storageaccount%",
+                           BlobStoragePath = "analysismodel/{name}",
+                           ImageSource = ImageSource.BlobStorage)]VisionAnalysisModel result,
+           string name,
+           TraceWriter log)
+        {
+            log.Info($"Analysis Results:{result.ToString()}");
+        }
+```
+
+##### Client Binding Example
+
+```
+public static async Task Run(
+    [BlobTrigger("visionrequest/{name}")]Stream storageBlob,
+    [VisionAnalysis()]VisionAnalysisClient visionclient,
            string name,
            TraceWriter log)
         {
@@ -123,10 +201,28 @@ public static async Task Run(
 ```
 
 #### VisionDescribe
+
+
+##### Model Binding Example
+```
+public static async Task Run(
+    [BlobTrigger("visionrequest/{name}")]Stream storageBlob,
+    [VisionDescribe(BlobStorageConnection = "%storageaccount%",
+                           BlobStoragePath = "analysismodel/{name}",
+                           ImageSource = ImageSource.BlobStorage)]VisionDescribeModel result,
+           string name,
+           TraceWriter log)
+        {
+            log.Info($"Analysis Results:{result.ToString()}");
+        }
+```
+
+##### Client Binding Example
+
 ```
 public static async Task Run(
            [BlobTrigger("visionrequest/{name}")]Stream storageBlob,
-           [VisionDescribe(Key = "%VisionKey%", Url = "%VisionUrl%")]VisionDescribeClient visionclient,
+           [VisionDescribe()]VisionDescribeClient visionclient,
            string name,
            TraceWriter log)
         {
@@ -136,10 +232,29 @@ public static async Task Run(
 ```
 
 #### VisionDomain (Celebrity)
+
+
+##### Model Binding Example
+```
+public static async Task Run(
+    [BlobTrigger("visionrequest/{name}")]Stream storageBlob,
+    [VisionDomain(BlobStorageConnection = "%storageaccount%",
+                           BlobStoragePath = "analysismodel/{name}",
+                           ImageSource = ImageSource.BlobStorage)]VisionDomainCelebrityModel result,
+           string name,
+           TraceWriter log)
+        {
+            log.Info($"Analysis Results:{result.ToString()}");
+        }
+```
+
+##### Client Binding Example
+
+
 ```
 public static async Task Run(
            [BlobTrigger("visionrequest/{name}")]Stream storageBlob,
-           [VisionDomain(Key = "%VisionKey%", Url = "%VisionUrl%")]VisionDomainClient visionclient
+           [VisionDomain()]VisionDomainClient visionclient
            string name,
            TraceWriter log)
         {
@@ -150,6 +265,24 @@ public static async Task Run(
 ```
 
 #### VisionDomain (Landmark)
+
+##### Model Binding Example
+```
+public static async Task Run(
+    [BlobTrigger("visionrequest/{name}")]Stream storageBlob,
+    [VisionDomain(BlobStorageConnection = "%storageaccount%",
+                           BlobStoragePath = "analysismodel/{name}",
+                           ImageSource = ImageSource.BlobStorage)]VisionDomainLandmarkModel result,
+           string name,
+           TraceWriter log)
+        {
+            log.Info($"Analysis Results:{result.ToString()}");
+        }
+```
+
+##### Client Binding Example
+
+
 ```
 public static async Task Run(
            [BlobTrigger("visionrequest/{name}")]Stream storageBlob,
@@ -163,10 +296,28 @@ public static async Task Run(
         }
 ```
 #### VisionHandwriting
+
+##### Model Binding Example
+```
+public static async Task Run(
+    [BlobTrigger("visionrequest/{name}")]Stream storageBlob,
+    [VisionHandwriting(BlobStorageConnection = "%storageaccount%",
+                           BlobStoragePath = "analysismodel/{name}",
+                           ImageSource = ImageSource.BlobStorage)]VisionHandwritingModel result,
+           string name,
+           TraceWriter log)
+        {
+            log.Info($"Analysis Results:{result.ToString()}");
+        }
+```
+
+##### Client Binding Example
+
+
 ```
 public static async Task Run(
            [BlobTrigger("visionrequest/{name}")]Stream storageBlob,
-           [VisionHandwriting(Key = "%VisionKey%", Url = "%VisionUrl%")]VisionHandwritingClient visionclient,
+           [VisionHandwriting()]VisionHandwritingClient visionclient,
            string name,
            TraceWriter log)
         {
@@ -175,10 +326,29 @@ public static async Task Run(
         }
 ```
 #### VisionOcr
+
+
+##### Model Binding Example
+```
+public static async Task Run(
+    [BlobTrigger("visionrequest/{name}")]Stream storageBlob,
+    [VisionOcr(BlobStorageConnection = "%storageaccount%",
+                           BlobStoragePath = "analysismodel/{name}",
+                           ImageSource = ImageSource.BlobStorage)]VisionOcrModel result,
+           string name,
+           TraceWriter log)
+        {
+            log.Info($"Analysis Results:{result.ToString()}");
+        }
+```
+
+##### Client Binding Example
+
+
 ```
 public static async Task Run(
            [BlobTrigger("visionrequest/{name}")]Stream storageBlob,
-            [VisionOcr(Key = "%VisionKey%", Url = "%VisionUrl%")]VisionOcrClient visionclient,
+            [VisionOcr()]VisionOcrClient visionclient,
            string name,
            TraceWriter log)
         {
@@ -187,6 +357,25 @@ public static async Task Run(
         }
 ```
 #### VisionThumbnail
+
+##### Model Binding Example
+```
+public static async Task Run(
+    [BlobTrigger("visionrequest/{name}")]Stream storageBlob,
+    [VisionThumbnail(BlobStorageConnection = "%storageaccount%",
+                           BlobStoragePath = "analysismodel/{name}",
+                           ImageSource = ImageSource.BlobStorage)]Byte[] result,
+           string name,
+           TraceWriter log)
+        {
+            log.Info($"Analysis Results: {result.length}");
+        }
+```
+
+##### Client Binding Example
+
+
+
 ```
 public static async Task Run(
            [BlobTrigger("visionrequest/{name}")]Stream storageBlob,

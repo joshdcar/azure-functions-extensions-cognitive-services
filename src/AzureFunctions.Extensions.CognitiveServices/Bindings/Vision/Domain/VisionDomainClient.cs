@@ -15,11 +15,11 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Domain
 {
     public class VisionDomainClient
     {
-        CognitiveServicesConfiguration _config;
+        IVisionBinding _config;
         VisionDomainAttribute _attr;
         ILogger _log;
 
-        public VisionDomainClient(CognitiveServicesConfiguration config, VisionDomainAttribute attr, ILoggerFactory loggerFactory)
+        public VisionDomainClient(IVisionBinding config, VisionDomainAttribute attr, ILoggerFactory loggerFactory)
         {
             this._config = config;
             this._attr = attr;
@@ -33,7 +33,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Domain
             return result;
         }
 
-        public async Task<VisionDomainLandmarkModel> AnalyzeLandscapeAsync(VisionDomainRequest request)
+        public async Task<VisionDomainLandmarkModel> AnalyzeLandmarkAsync(VisionDomainRequest request)
         {
             var result = await AnalyzeAsync<VisionDomainLandmarkModel>(request);
 
@@ -53,6 +53,12 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Domain
                 {
                     _log.LogWarning(VisionExceptionMessages.FileMissing);
                     throw new ArgumentException(VisionExceptionMessages.FileMissing);
+                }
+
+                if (ImageResizeService.IsImage(visionOperation.ImageBytes) == false)
+                {
+                    _log.LogWarning(VisionExceptionMessages.InvalidFileType);
+                    throw new ArgumentException(VisionExceptionMessages.InvalidFileType);
                 }
 
                 if (visionOperation.Oversized == true && visionOperation.AutoResize == false)
@@ -176,7 +182,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Domain
             return optionsParam;
         }
 
-        private async Task<VisionDomainRequest> MergeProperties(VisionDomainRequest operation, CognitiveServicesConfiguration config, VisionDomainAttribute attr)
+        private async Task<VisionDomainRequest> MergeProperties(VisionDomainRequest operation, IVisionBinding config, VisionDomainAttribute attr)
         {
             //Attributes do not allow for enum types so we have to validate
             //the string passed into the attribute to ensure it matches
@@ -209,8 +215,8 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Domain
 
             var visionOperation = new VisionDomainRequest
             {
-                Url = attr.Url ?? operation.Url,
-                Key = attr.Key ?? operation.Key,
+                Url = attr.VisionUrl ?? operation.Url,
+                Key = attr.VisionKey ?? operation.Key,
                 SecureKey = attr.SecureKey ?? attr.SecureKey,
                 AutoResize = attr.AutoResize,
                 Domain = attrDomain == VisionDomainOptions.None ? operation.Domain : attrDomain,

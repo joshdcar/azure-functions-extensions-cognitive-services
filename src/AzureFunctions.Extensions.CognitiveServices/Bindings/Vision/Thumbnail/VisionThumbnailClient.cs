@@ -14,11 +14,11 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Thumbnail
 {
     public class VisionThumbnailClient
     {
-        CognitiveServicesConfiguration _config;
+        IVisionBinding _config;
         VisionThumbnailAttribute _attr;
         ILogger _log;
 
-        public VisionThumbnailClient(CognitiveServicesConfiguration config, VisionThumbnailAttribute attr, ILoggerFactory loggerFactory)
+        public VisionThumbnailClient(IVisionBinding config, VisionThumbnailAttribute attr, ILoggerFactory loggerFactory)
         {
             this._config = config;
             this._attr = attr;
@@ -39,6 +39,13 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Thumbnail
                     _log.LogWarning(VisionExceptionMessages.FileMissing);
                     throw new ArgumentException(VisionExceptionMessages.FileMissing);
                 }
+
+                if (ImageResizeService.IsImage(visionOperation.ImageBytes) == false)
+                {
+                    _log.LogWarning(VisionExceptionMessages.InvalidFileType);
+                    throw new ArgumentException(VisionExceptionMessages.InvalidFileType);
+                }
+
 
                 if (visionOperation.Oversized == true && visionOperation.AutoResize == false)
                 {
@@ -140,13 +147,13 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Thumbnail
 
         }
 
-        private async Task<VisionThumbnailRequest> MergeProperties(VisionThumbnailRequest operation, CognitiveServicesConfiguration config, VisionThumbnailAttribute attr)
+        private async Task<VisionThumbnailRequest> MergeProperties(VisionThumbnailRequest operation, IVisionBinding config, VisionThumbnailAttribute attr)
         {
 
             var visionOperation = new VisionThumbnailRequest
             {
-                Url = attr.Url ?? operation.Url,
-                Key = attr.Key ?? operation.Key,
+                Url = attr.VisionUrl ?? operation.Url,
+                Key = attr.VisionKey ?? operation.Key,
                 SecureKey = attr.SecureKey ?? attr.SecureKey,
                 AutoResize = attr.AutoResize,
                 Height = attr.Height,

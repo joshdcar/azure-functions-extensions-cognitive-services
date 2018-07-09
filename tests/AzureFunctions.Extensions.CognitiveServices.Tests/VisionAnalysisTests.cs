@@ -24,7 +24,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             ICognitiveServicesClient client = new TestCognitiveServicesClient();
             var mockResult = JsonConvert.DeserializeObject<VisionAnalysisModel>(MockResults.VisionAnalysisResults);
 
-            await TestHelper.ExecuteFunction<VisionFunctions>(client, "VisionFunctions.VisionAnalysisWithUrl");
+            await TestHelper.ExecuteFunction<VisionFunctions, VisionAnalysisBinding>(client, "VisionFunctions.VisionAnalysisWithUrl");
 
             var expectedResult = JsonConvert.SerializeObject(mockResult);
             var actualResult = JsonConvert.SerializeObject(visionAnalysisUrlResult);
@@ -38,7 +38,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             ICognitiveServicesClient client = new TestCognitiveServicesClient();
             var mockResult = JsonConvert.DeserializeObject<VisionAnalysisModel>(MockResults.VisionAnalysisResults);
 
-            await TestHelper.ExecuteFunction<VisionFunctions>(client, "VisionFunctions.VisionAnalysisWithImageBytes");
+            await TestHelper.ExecuteFunction<VisionFunctions, VisionAnalysisBinding>(client, "VisionFunctions.VisionAnalysisWithImageBytes");
 
             var expectedResult = JsonConvert.SerializeObject(mockResult);
             var actualResult = JsonConvert.SerializeObject(visionAnalysisImageBytesResult);
@@ -52,7 +52,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             ICognitiveServicesClient client = new TestCognitiveServicesClient();
             var mockResult = JsonConvert.DeserializeObject<VisionAnalysisModel>(MockResults.VisionAnalysisResults);
 
-            await TestHelper.ExecuteFunction<VisionFunctions>(client, "VisionFunctions.VisionAnalysisWithTooBigImageBytesWithResize");
+            await TestHelper.ExecuteFunction<VisionFunctions, VisionAnalysisBinding>(client, "VisionFunctions.VisionAnalysisWithTooBigImageBytesWithResize");
 
             var expectedResult = JsonConvert.SerializeObject(mockResult);
             var actualResult = JsonConvert.SerializeObject(visionAnalysisImageBytesResizeResult);
@@ -67,7 +67,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
 
             string exceptionMessage = "or smaller for the cognitive service vision API";
 
-            var exception = await Record.ExceptionAsync(() => TestHelper.ExecuteFunction<VisionFunctions>
+            var exception = await Record.ExceptionAsync(() => TestHelper.ExecuteFunction<VisionFunctions, VisionAnalysisBinding>
                         (client, "VisionFunctions.VisionAnalysisWithTooBigImageBytes"));
 
             exception.Should().NotBeNull();
@@ -83,7 +83,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
         {
             ICognitiveServicesClient client = new TestCognitiveServicesClient();
 
-            var exception = await Record.ExceptionAsync(() => TestHelper.ExecuteFunction<VisionFunctions>
+            var exception = await Record.ExceptionAsync(() => TestHelper.ExecuteFunction<VisionFunctions, VisionAnalysisBinding>
                         (client, "VisionFunctions.VisionAnalysisMissingFile"));
 
             exception.Should().NotBeNull();
@@ -97,7 +97,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
         {
 
             public async Task VisionAnalysisWithUrl(
-                [VisionAnalysis(Url = "%VisionUrl%", Key ="%VisionKey%")]
+                [VisionAnalysis(VisionUrl = "%VisionUrl%", VisionKey ="%VisionKey%")]
                  VisionAnalysisClient client)
             {
                 var request = new VisionAnalysisRequest();
@@ -109,7 +109,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionAnalysisWithImageBytes(
-                [VisionAnalysis(Url = "%VisionUrl%", Key ="%VisionKey%")]
+                [VisionAnalysis(VisionUrl = "%VisionUrl%", VisionKey ="%VisionKey%")]
                  VisionAnalysisClient client)
             {
                 var request = new VisionAnalysisRequest();
@@ -121,11 +121,12 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionAnalysisWithTooBigImageBytes(
-                [VisionAnalysis(Url = "%VisionUrl%", Key ="%VisionKey%")]
+                [VisionAnalysis(VisionUrl = "%VisionUrl%", VisionKey ="%VisionKey%" , AutoResize = false)]
                  VisionAnalysisClient client)
             {
                 
                  var request = new VisionAnalysisRequest();
+
                  request.ImageBytes = MockResults.SamplePhotoTooBig;
 
                  var result = await client.AnalyzeAsync(request);
@@ -133,7 +134,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionAnalysisWithTooBigImageBytesWithResize(
-                [VisionAnalysis(Url = "%VisionUrl%", Key = "%VisionKey%", AutoResize = true)]
+                [VisionAnalysis(VisionUrl = "%VisionUrl%", VisionKey = "%VisionKey%", AutoResize = true)]
                  VisionAnalysisClient client)
             {
 
@@ -147,7 +148,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionAnalysisMissingFile(
-                [VisionAnalysis(Url = "%VisionUrl%", Key ="%VisionKey%")]
+                [VisionAnalysis(VisionUrl = "%VisionUrl%", VisionKey ="%VisionKey%")]
                  VisionAnalysisClient client)
             {
 
@@ -158,7 +159,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionAnalysisKeyvault(
-                [VisionAnalysis(Url = "%VisionUrl%", Key ="[VisionKey]")]
+                [VisionAnalysis(VisionUrl = "%VisionUrl%", VisionKey ="[VisionKey]")]
                  VisionAnalysisClient client)
             {
 
