@@ -97,7 +97,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
         {
 
             public async Task VisionAnalysisWithUrl(
-                [VisionAnalysis(VisionUrl = "%VisionUrl%", VisionKey ="%VisionKey%")]
+                [VisionAnalysis()]
                  VisionAnalysisClient client)
             {
                 var request = new VisionAnalysisRequest();
@@ -109,7 +109,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionAnalysisWithImageBytes(
-                [VisionAnalysis(VisionUrl = "%VisionUrl%", VisionKey ="%VisionKey%")]
+                [VisionAnalysis()]
                  VisionAnalysisClient client)
             {
                 var request = new VisionAnalysisRequest();
@@ -121,7 +121,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionAnalysisWithTooBigImageBytes(
-                [VisionAnalysis(VisionUrl = "%VisionUrl%", VisionKey ="%VisionKey%" , AutoResize = false)]
+                [VisionAnalysis(AutoResize = false)]
                  VisionAnalysisClient client)
             {
                 
@@ -134,7 +134,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionAnalysisWithTooBigImageBytesWithResize(
-                [VisionAnalysis(VisionUrl = "%VisionUrl%", VisionKey = "%VisionKey%", AutoResize = true)]
+                [VisionAnalysis(AutoResize = true)]
                  VisionAnalysisClient client)
             {
 
@@ -148,7 +148,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionAnalysisMissingFile(
-                [VisionAnalysis(VisionUrl = "%VisionUrl%", VisionKey ="%VisionKey%")]
+                [VisionAnalysis()]
                  VisionAnalysisClient client)
             {
 
@@ -159,7 +159,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionAnalysisKeyvault(
-                [VisionAnalysis(VisionUrl = "%VisionUrl%", VisionKey ="[VisionKey]")]
+                [VisionAnalysis()]
                  VisionAnalysisClient client)
             {
 

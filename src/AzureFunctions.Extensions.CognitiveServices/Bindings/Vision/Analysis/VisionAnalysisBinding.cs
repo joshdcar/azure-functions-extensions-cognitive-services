@@ -63,7 +63,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Analysis
 
             if (attribute.ImageSource == ImageSource.BlobStorage)
             {
-                var fileTask = StorageServices.GetFileBytes(attribute.BlobStoragePath, attribute.BlobStorageConnection);
+                var fileTask = StorageServices.GetFileBytes(attribute.BlobStoragePath, attribute.BlobStorageAccount);
                 fileTask.Wait();
 
                 request.ImageBytes = fileTask.Result;

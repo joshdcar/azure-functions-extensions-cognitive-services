@@ -100,7 +100,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
         {
 
             public async Task VisionDescribeWithUrl(
-                [VisionDescribe(VisionUrl = "%VisionUrl%", VisionKey ="%VisionKey%")]
+                [VisionDescribe()]
                  VisionDescribeClient client)
             {
                 var request = new VisionDescribeRequest();
@@ -112,7 +112,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionDescribeWithImageBytes(
-                [VisionDescribe(VisionUrl = "%VisionUrl%", VisionKey ="%VisionKey%")]
+                [VisionDescribe()]
                  VisionDescribeClient client)
             {
                 var request = new VisionDescribeRequest();
@@ -123,7 +123,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionDescribeWithTooBigImageBytes(
-                [VisionDescribe(VisionUrl = "%VisionUrl%", VisionKey ="%VisionKey%", AutoResize=false)]
+                [VisionDescribe(AutoResize=false)]
                  VisionDescribeClient client)
             {
 
@@ -136,7 +136,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionDescribeWithTooBigImageBytesWithResize(
-                [VisionDescribe(VisionUrl = "%VisionUrl%", VisionKey = "%VisionKey%", AutoResize = true)]
+                [VisionDescribe()]
                  VisionDescribeClient client)
             {
 
@@ -150,7 +150,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionDescribeMissingFile(
-                [VisionDescribe(VisionUrl = "%VisionUrl%", VisionKey ="%VisionKey%")]
+                [VisionDescribe()]
                  VisionDescribeClient client)
             {
 
@@ -161,7 +161,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionDescribeKeyvault(
-                [VisionDescribe(VisionUrl = "%VisionUrl%", VisionKey ="[VisionKey]")]
+                [VisionDescribe()]
                  VisionDescribeClient client)
             {
 

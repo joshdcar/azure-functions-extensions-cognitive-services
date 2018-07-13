@@ -35,17 +35,17 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings
         /// <summary>
         /// Vision Service URL. Defaults to an appSettings of VisionUrl
         /// </summary>
-        [AutoResolve(Default = "%VisionUrl%")]
+        [AppSetting(Default = "VisionUrl")]
         public string VisionUrl { get; set; }
 
         /// <summary>
         /// Authentication Key for Vision Service. Defaults to an appsettings 
         /// of VisionKey
         /// </summary>
-        [AutoResolve(Default = "%VisionKey%")]
+        [AppSetting(Default = "VisionKey")]
         public string VisionKey { get; set; }
 
-        [AutoResolve()]
+        [AppSetting()]
         public string SecureKey { get; set; }
 
         /// <summary>
@@ -63,8 +63,8 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings
         /// <summary>
         /// Vision Service URL. Defaults to a appsetting of VisionStorage
         /// </summary>
-        [AutoResolve()]
-        public string BlobStorageConnection { get; set; }
+        [AppSetting(Default = "StorageAccount")]
+        public string BlobStorageAccount { get; set; }
 
         /// <summary>
         /// Path to the file being analyzed in BlobStorage. May be set
@@ -100,7 +100,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings
 
                 case ImageSource.BlobStorage:
 
-                    if (string.IsNullOrEmpty(BlobStorageConnection))
+                    if (string.IsNullOrEmpty(BlobStorageAccount))
                     {
                         throw new ArgumentException($"A value for BlobStorageConnection must be provided for an image source of BlobStorage");
                     }
