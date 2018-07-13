@@ -25,7 +25,7 @@ More details on the various Cognitive Services offerings can be found at [https:
 
 ### Current Version
 
-Latest Version: 1.0.0-preview2 
+Latest Version: 1.0.0-preview3 
 
 Current Azure Function Dependency:  Microsoft.Azure.Webjobs.Extensions (3.0.0-beta5)
 
@@ -102,7 +102,7 @@ is provided by the Blob Trigger and the path and connection is already known.
 
 ```
  [BlobTrigger("analysismodel/{name}")]Stream storageBlob,
- [VisionAnalysis(BlobStorageConnection = "%storageaccount%",
+ [VisionAnalysis(BlobStorageAccount = "StorageAccount",
                            BlobStoragePath = "analysismodel/{name}",
                            ImageSource = ImageSource.BlobStorage)]VisionAnalysisModel result,
  string name,
@@ -176,7 +176,7 @@ Binding example with VisionAnalysis Attribute and VisionAnalysisClient binding:
 ```
 public static async Task Run(
     [BlobTrigger("visionrequest/{name}")]Stream storageBlob,
-    [VisionAnalysis(BlobStorageConnection = "%storageaccount%",
+    [VisionAnalysis(BlobStorageAccount = "StorageAccount",
                            BlobStoragePath = "analysismodel/{name}",
                            ImageSource = ImageSource.BlobStorage)]VisionAnalysisModel result,
            string name,
@@ -207,7 +207,7 @@ public static async Task Run(
 ```
 public static async Task Run(
     [BlobTrigger("visionrequest/{name}")]Stream storageBlob,
-    [VisionDescribe(BlobStorageConnection = "%storageaccount%",
+    [VisionDescribe(BlobStorageAccount = "StorageAccount",
                            BlobStoragePath = "analysismodel/{name}",
                            ImageSource = ImageSource.BlobStorage)]VisionDescribeModel result,
            string name,
@@ -238,7 +238,7 @@ public static async Task Run(
 ```
 public static async Task Run(
     [BlobTrigger("visionrequest/{name}")]Stream storageBlob,
-    [VisionDomain(BlobStorageConnection = "%storageaccount%",
+    [VisionDomain(BlobStorageAccount = "StorageAccount",
                            BlobStoragePath = "analysismodel/{name}",
                            ImageSource = ImageSource.BlobStorage)]VisionDomainCelebrityModel result,
            string name,

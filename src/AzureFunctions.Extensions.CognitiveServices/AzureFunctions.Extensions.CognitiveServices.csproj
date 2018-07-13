@@ -5,7 +5,7 @@
     <DebugType>Full</DebugType>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.0-preview1</Version>
+    <Version>1.0.0-preview2</Version>
     <Description>Cognitive Services Extensions for Azure Functions</Description>
     <RepositoryUrl>https://github.com/joshdcar/azure-functions-extensions-cognitive-services</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -13,6 +13,11 @@
     <PackageLicenseUrl>https://choosealicense.com/licenses/mit/</PackageLicenseUrl>
     <Copyright>MIT License</Copyright>
     <PackageIconUrl />
+    <PackageReleaseNotes>- Support for additional bindings
+- Autoresize of image support
+- Bug Fixes
+
+More details visit https://github.com/joshdcar/azure-functions-extensions-cognitive-services</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

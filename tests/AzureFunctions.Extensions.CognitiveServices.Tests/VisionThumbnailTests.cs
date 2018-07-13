@@ -83,7 +83,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
         {
 
             public async Task VisionThumbnailWithUrl(
-                [VisionThumbnail(VisionUrl = "%VisionUrl%", VisionKey ="%VisionKey%", Width ="100", Height="100")]
+                [VisionThumbnail( Width ="100", Height="100")]
                  VisionThumbnailClient client)
             {
                 var request = new VisionThumbnailRequest();
@@ -95,7 +95,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionThumbnailWithImageBytes(
-                [VisionThumbnail(VisionUrl = "%VisionUrl%", VisionKey ="%VisionKey%", Width ="100", Height="100")]
+                [VisionThumbnail(Width ="100", Height="100")]
                  VisionThumbnailClient client)
             {
                 var request = new VisionThumbnailRequest();
@@ -107,7 +107,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionThumbnailWithTooBigImageBytes(
-                [VisionThumbnail(VisionUrl = "%VisionUrl%", VisionKey ="%VisionKey%", AutoResize = false,  Width ="100", Height="100")]
+                [VisionThumbnail(AutoResize = false,  Width ="100", Height="100")]
                  VisionThumbnailClient client)
             {
 
@@ -119,7 +119,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionThumbnailWithTooBigImageBytesWithResize(
-                [VisionThumbnail(VisionUrl = "%VisionUrl%", VisionKey = "%VisionKey%", AutoResize = true, Width ="100", Height="100")]
+                [VisionThumbnail(AutoResize = true, Width ="100", Height="100")]
                  VisionThumbnailClient client)
             {
 
@@ -133,7 +133,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionThumbnailMissingFile(
-                [VisionThumbnail(VisionUrl = "%VisionUrl%", VisionKey ="%VisionKey%", Width ="100", Height="100")]
+                [VisionThumbnail(Width ="100", Height="100")]
                  VisionThumbnailClient client)
             {
 
@@ -144,7 +144,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
             }
 
             public async Task VisionThumbnailKeyvault(
-                [VisionThumbnail(VisionUrl = "%VisionUrl%", VisionKey ="[VisionKey]", Width ="100", Height="100")]
+                [VisionThumbnail(Width ="100", Height="100")]
                  VisionThumbnailClient client)
             {
 

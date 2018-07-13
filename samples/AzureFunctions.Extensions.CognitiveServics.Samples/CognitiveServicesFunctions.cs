@@ -32,9 +32,7 @@ namespace AzureFunctions.Extensions.CognitiveServics.Samples
         [FunctionName("VisionAnalysisModelBlobFunction")]
         public static async Task VisionAnalysisModelBlobFunctionRun(
            [BlobTrigger("analysismodel/{name}")]Stream storageBlob,
-           [VisionAnalysis(VisionKey = "%VisionKey%",
-                           VisionUrl = "%VisionUrl%",
-                           BlobStorageConnection = "%storageaccount%",
+           [VisionAnalysis(BlobStorageAccount = "StorageAccount",
                            BlobStoragePath = "analysismodel/{name}",
                            ImageSource = ImageSource.BlobStorage)]VisionAnalysisModel result,
            string name,
@@ -45,42 +43,12 @@ namespace AzureFunctions.Extensions.CognitiveServics.Samples
 
         }
 
-        /// <summary>
-        /// Sample calling Vision Analysis Triggered from a blob storage 
-        ///     Trigger: Blob Storage
-        ///     Output: Table Storage
-        ///     Vision Binding:  Client w/ keyvault settings
-        /// </summary>
-        /// <param name="storageBlob"></param>
-        /// <param name="results"></param>
-        /// <param name="visionclient"></param>
-        /// <param name="name"></param>
-        /// <param name="log"></param>
-        /// <returns></returns>
-        [FunctionName("VisionAnalysisWithKeyVaultBlobFunction")]
-        public static async Task VisionAnalysisWithKeyVaultRun(
-           [BlobTrigger("analysiskeyvault/{name}")]Stream storageBlob,
-           [Table("VisionResults")]IAsyncCollector<VisionResult> results,
-           [VisionAnalysis(SecureKey = "%VisionApiKeyVaultSetting%", VisionUrl = "%VisionUrl%")]VisionAnalysisClient visionclient,
-           string name,
-           TraceWriter log)
-        {
-
-            var result = await visionclient.AnalyzeAsync(new VisionAnalysisRequest(storageBlob));
-
-            await results.AddAsync(new VisionResult(Guid.NewGuid().ToString(), "VisionAnalysis") { ResultJson = result.ToString() });
-
-            log.Info($"Analysis Results:{result.ToString()}");
-
-        }
-
-        
 
         [FunctionName("VisionAnalysisBlobFunction")]
         public static async Task VisionAnalysisRun(
            [BlobTrigger("analysis/{name}")]Stream storageBlob,
            [Table("VisionResults")]IAsyncCollector<VisionResult> results,
-           [VisionAnalysis(VisionKey = "%VisionKey%", VisionUrl = "%VisionUrl%", AutoResize = true)]VisionAnalysisClient visionclient,
+           [VisionAnalysis()]VisionAnalysisClient visionclient,
            string name,
            TraceWriter log)
         {
@@ -100,7 +68,7 @@ namespace AzureFunctions.Extensions.CognitiveServics.Samples
         public static async Task VisionDescribeBlobFunction(
             [BlobTrigger("describe/{name}")]Stream storageBlob,
             [Table("VisionResults")]IAsyncCollector<VisionResult> results,
-            [VisionDescribe(VisionKey = "%VisionKey%", VisionUrl = "%VisionUrl%")]VisionDescribeClient visionclient,
+            [VisionDescribe()]VisionDescribeClient visionclient,
             string name,
             TraceWriter log
             )
@@ -117,11 +85,9 @@ namespace AzureFunctions.Extensions.CognitiveServics.Samples
         public static async Task VisionDescribeModelBlobFunction(
             [BlobTrigger("describe/{name}")]Stream storageBlob,
             [Table("VisionResults")]IAsyncCollector<VisionResult> results,
-            [VisionDescribe(VisionKey = "%VisionKey%",
-                           VisionUrl = "%VisionUrl%",
-                           BlobStorageConnection = "%storageaccount%",
+            [VisionDescribe(BlobStorageAccount = "StorageAccount",
                            BlobStoragePath = "describemodel/{name}",
-                           ImageSource = ImageSource.BlobStorage)]VisionAnalysisModel result,
+                           ImageSource = ImageSource.BlobStorage)]VisionDescribeModel result,
             string name,
             TraceWriter log
             )
@@ -132,9 +98,7 @@ namespace AzureFunctions.Extensions.CognitiveServics.Samples
         [FunctionName("VisionThumbnailBlobFunction")]
         public static async Task VisionThumbnailBlobFunction(
          [BlobTrigger("thumbnail/{name}")]Stream storageBlob,
-         [VisionThumbnail(VisionKey = "%VisionKey%",
-                          VisionUrl = "%VisionUrl%",
-                          AutoResize = true,
+         [VisionThumbnail(AutoResize = true,
                           Height ="100",
                           Width = "100",
                           SmartCropping =true)]VisionThumbnailClient visionclient,
@@ -150,7 +114,7 @@ namespace AzureFunctions.Extensions.CognitiveServics.Samples
             {
                 await stream.CopyToAsync(thumbnailBlob);
             }
-                
+
             log.Info($"Image thumbnail generated");
 
         }
@@ -159,7 +123,7 @@ namespace AzureFunctions.Extensions.CognitiveServics.Samples
         public static async Task VisionOcrBlobFunction(
             [BlobTrigger("ocrrequest/{name}")]Stream storageBlob,
             [Table("VisionResults")]IAsyncCollector<VisionResult> results,
-            [VisionOcr(VisionKey = "%VisionKey%", VisionUrl = "%VisionUrl%")]VisionOcrClient visionclient,
+            [VisionOcr()]VisionOcrClient visionclient,
             string name,
             TraceWriter log
             )
@@ -176,7 +140,7 @@ namespace AzureFunctions.Extensions.CognitiveServics.Samples
         public static async Task VisionHandwritingBlobFunction(
             [BlobTrigger("handwriting/{name}")]Stream storageBlob,
             [Table("VisionResults")]IAsyncCollector<VisionResult> results,
-            [VisionHandwriting(VisionKey = "%VisionKey%", VisionUrl = "%VisionUrl%")]VisionHandwritingClient visionclient,
+            [VisionHandwriting()]VisionHandwritingClient visionclient,
             string name,
             TraceWriter log
             )
@@ -193,7 +157,7 @@ namespace AzureFunctions.Extensions.CognitiveServics.Samples
         public static async Task VisionCelebrityBlobFunction(
            [BlobTrigger("celebrity/{name}")]Stream storageBlob,
            [Table("VisionResults")]IAsyncCollector<VisionResult> results,
-           [VisionDomain(VisionKey = "%VisionKey%", VisionUrl = "%VisionUrl%", Domain = VisionDomainRequest.CELEBRITY_DOMAIN)]VisionDomainClient visionclient,
+           [VisionDomain(Domain = VisionDomainRequest.CELEBRITY_DOMAIN)]VisionDomainClient visionclient,
            string name,
            TraceWriter log
            )
@@ -206,14 +170,14 @@ namespace AzureFunctions.Extensions.CognitiveServics.Samples
 
             log.Info($"Celebrity Domain results:{celebrityResult.ToString()}");
 
-            
+
         }
 
         [FunctionName("VisionLandmarkBlobFunction")]
         public static async Task VisionLandmarkBlobFunction(
           [BlobTrigger("landmarks/{name}")]Stream storageBlob,
           [Table("VisionResults")]IAsyncCollector<VisionResult> results,
-          [VisionDomain(VisionKey = "%VisionKey%", VisionUrl = "%VisionUrl%", Domain = VisionDomainRequest.LANDMARK_DOMAIN)]VisionDomainClient visionclient,
+          [VisionDomain(Domain = VisionDomainRequest.LANDMARK_DOMAIN)]VisionDomainClient visionclient,
           string name,
           TraceWriter log
           )

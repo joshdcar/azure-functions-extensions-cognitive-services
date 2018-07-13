@@ -62,7 +62,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Thumbnail
 
             if (attribute.ImageSource == ImageSource.BlobStorage)
             {
-                var fileTask = StorageServices.GetFileBytes(attribute.BlobStoragePath, attribute.BlobStorageConnection);
+                var fileTask = StorageServices.GetFileBytes(attribute.BlobStoragePath, attribute.BlobStorageAccount);
                 fileTask.Wait();
 
                 request.ImageBytes = fileTask.Result;

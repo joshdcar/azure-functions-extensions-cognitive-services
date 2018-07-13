@@ -8,7 +8,7 @@ using System.Text;
 
 namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Ocr
 {
-    class VisionOcrBinding : IExtensionConfigProvider, IVisionBinding
+    public class VisionOcrBinding : IExtensionConfigProvider, IVisionBinding
     {
 
         public ICognitiveServicesClient Client { get; set; }
@@ -27,10 +27,10 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Ocr
             var visionRule = context.AddBindingRule<VisionOcrAttribute>();
 
             visionRule.When(nameof(VisionOcrAttribute.ImageSource), ImageSource.BlobStorage)
-                .BindToInput<VisionOcrModel>(GetVisionHandwritingModel);
+                .BindToInput<VisionOcrModel>(GetVisionOcrModel);
 
             visionRule.When(nameof(VisionOcrAttribute.ImageSource), ImageSource.Url)
-             .BindToInput<VisionOcrModel>(GetVisionHandwritingModel);
+             .BindToInput<VisionOcrModel>(GetVisionOcrModel);
 
             visionRule.When(nameof(VisionOcrAttribute.ImageSource), ImageSource.Client)
                 .BindToInput<VisionOcrClient>(attr => new VisionOcrClient(this, attr, _loggerFactory));
@@ -45,7 +45,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Ocr
             }
         }
 
-        private VisionOcrModel GetVisionHandwritingModel(VisionOcrAttribute attribute)
+        private VisionOcrModel GetVisionOcrModel(VisionOcrAttribute attribute)
         {
 
             if (attribute.ImageSource == Bindings.ImageSource.Client)
@@ -61,7 +61,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Ocr
 
             if (attribute.ImageSource == ImageSource.BlobStorage)
             {
-                var fileTask = StorageServices.GetFileBytes(attribute.BlobStoragePath, attribute.BlobStorageConnection);
+                var fileTask = StorageServices.GetFileBytes(attribute.BlobStoragePath, attribute.BlobStorageAccount);
                 fileTask.Wait();
 
                 request.ImageBytes = fileTask.Result;
