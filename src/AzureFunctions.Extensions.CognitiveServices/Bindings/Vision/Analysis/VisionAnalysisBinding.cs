@@ -1,30 +1,30 @@
 ﻿using AzureFunctions.Extensions.CognitiveServices.Config;
 using AzureFunctions.Extensions.CognitiveServices.Services;
+using Microsoft.Azure.WebJobs.Description;
 using Microsoft.Azure.WebJobs.Host.Config;
 using Microsoft.Extensions.Logging;
-using Microsoft.WindowsAzure.Storage;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+
 
 namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Analysis
 {
+    [Extension("VisionAnalysis")]
     public class VisionAnalysisBinding : IExtensionConfigProvider, IVisionBinding
     {
 
         public ICognitiveServicesClient Client {get;set;}
 
         internal ILoggerFactory _loggerFactory;
-        internal ILogger _log;
 
-        
+        public VisionAnalysisBinding(ILoggerFactory loggerFactory)
+        {
+            _loggerFactory = loggerFactory;
+        }
+
         public void Initialize(ExtensionConfigContext context)
         {
 
             LoadClient();
-
-            _loggerFactory = context.Config.LoggerFactory ?? throw new ArgumentNullException("Logger Missing");
 
             var visionAnalysisRule = context.AddBindingRule<VisionAnalysisAttribute>();
 

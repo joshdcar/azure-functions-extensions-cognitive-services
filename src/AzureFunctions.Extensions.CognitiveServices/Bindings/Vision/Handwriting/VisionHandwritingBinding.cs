@@ -1,5 +1,6 @@
 ﻿using AzureFunctions.Extensions.CognitiveServices.Config;
 using AzureFunctions.Extensions.CognitiveServices.Services;
+using Microsoft.Azure.WebJobs.Description;
 using Microsoft.Azure.WebJobs.Host.Config;
 using Microsoft.Extensions.Logging;
 using System;
@@ -8,21 +9,23 @@ using System.Text;
 
 namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Handwriting
 {
+    [Extension("VisionHandwriting")]
     public class VisionHandwritingBinding : IExtensionConfigProvider, IVisionBinding
     {
 
         public ICognitiveServicesClient Client { get; set; }
 
         internal ILoggerFactory _loggerFactory;
-        internal ILogger _log;
-
+        
+        public VisionHandwritingBinding(ILoggerFactory factory)
+        {
+            _loggerFactory = factory;
+        }
 
         public void Initialize(ExtensionConfigContext context)
         {
 
             LoadClient();
-
-            _loggerFactory = context.Config.LoggerFactory ?? throw new ArgumentNullException("Logger Missing");
 
             var visionRule = context.AddBindingRule<VisionHandwritingAttribute>();
 

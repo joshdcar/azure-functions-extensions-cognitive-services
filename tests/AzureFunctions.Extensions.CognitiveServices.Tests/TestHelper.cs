@@ -24,55 +24,56 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
         {
             IExtensionConfigProvider binding = null;
 
-            if(typeof(BindingType) == typeof(VisionAnalysisBinding))
-            {
-                binding = new VisionAnalysisBinding();
-            }
+            //    if(typeof(BindingType) == typeof(VisionAnalysisBinding))
+            //    {
+            //        binding = new VisionAnalysisBinding();
+            //    }
 
-            if (typeof(BindingType) == typeof(VisionDescribeBinding))
-            {
-                binding = new VisionDescribeBinding();
-            }
+            //    if (typeof(BindingType) == typeof(VisionDescribeBinding))
+            //    {
+            //        binding = new VisionDescribeBinding();
+            //    }
 
-            if (typeof(BindingType) == typeof(VisionHandwritingBinding))
-            {
-                binding = new VisionHandwritingBinding();
-            }
+            //    if (typeof(BindingType) == typeof(VisionHandwritingBinding))
+            //    {
+            //        binding = new VisionHandwritingBinding();
+            //    }
 
-            if (typeof(BindingType) == typeof(VisionOcrBinding))
-            {
-                binding = new VisionOcrBinding();
-            }
+            //    if (typeof(BindingType) == typeof(VisionOcrBinding))
+            //    {
+            //        binding = new VisionOcrBinding();
+            //    }
 
-            if (typeof(BindingType) == typeof(VisionThumbnailBinding))
-            {
-                binding = new VisionThumbnailBinding();
-            }
+            //    if (typeof(BindingType) == typeof(VisionThumbnailBinding))
+            //    {
+            //        binding = new VisionThumbnailBinding();
+            //    }
 
-            (binding as IVisionBinding).Client = client;
+            //    (binding as IVisionBinding).Client = client;
 
-            var jobHost = NewHost<FunctionType>(binding);
-            
-            var args = new Dictionary<string, object>();
-            await jobHost.CallAsync(functionReference, args);
+            //    var jobHost = NewHost<FunctionType>(binding);
+
+            //    var args = new Dictionary<string, object>();
+            //    await jobHost.CallAsync(functionReference, args);
+            //}
+
+            //public static JobHost NewHost<T>(IExtensionConfigProvider ext)
+            //{
+            //    JobHostConfiguration config = new JobHostConfiguration();
+            //    config.HostId = Guid.NewGuid().ToString("n");
+            //    config.StorageConnectionString = null;
+            //    config.DashboardConnectionString = null;
+            //    config.TypeLocator = new FakeTypeLocator<T>();
+            //    config.AddExtension(ext);
+            //    config.NameResolver = new NameResolver();
+
+            //    var host = new JobHost(config);
+
+            //    return host;
+            //}
+
+
         }
-
-        public static JobHost NewHost<T>(IExtensionConfigProvider ext)
-        {
-            JobHostConfiguration config = new JobHostConfiguration();
-            config.HostId = Guid.NewGuid().ToString("n");
-            config.StorageConnectionString = null;
-            config.DashboardConnectionString = null;
-            config.TypeLocator = new FakeTypeLocator<T>();
-            config.AddExtension(ext);
-            config.NameResolver = new NameResolver();
-
-            var host = new JobHost(config);
-           
-            return host;
-        }
-
-
     }
 
     public class NameResolver : INameResolver

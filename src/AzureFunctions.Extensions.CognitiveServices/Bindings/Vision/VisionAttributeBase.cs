@@ -45,8 +45,6 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings
         [AppSetting(Default = "VisionKey")]
         public string VisionKey { get; set; }
 
-        [AppSetting()]
-        public string SecureKey { get; set; }
 
         /// <summary>
         /// The source of the image being analyzed.
