@@ -18,9 +18,10 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Describe
 
         internal ILoggerFactory _loggerFactory;
 
-        public VisionDescribeBinding(ILoggerFactory loggerFactory)
+        public VisionDescribeBinding(ILoggerFactory loggerFactory, ICognitiveServicesClient client)
         {
             _loggerFactory = loggerFactory;
+            this.Client = client;
         }
 
         public void Initialize(ExtensionConfigContext context)

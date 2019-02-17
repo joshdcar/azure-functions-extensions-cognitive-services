@@ -18,9 +18,10 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Thumbnail
 
         internal ILoggerFactory _loggerFactory;
         
-        public VisionThumbnailBinding(ILoggerFactory loggerFactory)
+        public VisionThumbnailBinding(ILoggerFactory loggerFactory, ICognitiveServicesClient client)
         {
             _loggerFactory = loggerFactory;
+            this.Client = client;
         }
 
         public void Initialize(ExtensionConfigContext context)

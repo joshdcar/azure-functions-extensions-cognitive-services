@@ -20,9 +20,10 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Ocr
         internal ILogger _log;
 
 
-        public VisionOcrBinding(ILoggerFactory loggerFactory)
+        public VisionOcrBinding(ILoggerFactory loggerFactory, ICognitiveServicesClient client)
         {
             _loggerFactory = loggerFactory;
+            this.Client = client;
         }
 
         public void Initialize(ExtensionConfigContext context)

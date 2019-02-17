@@ -15,9 +15,10 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Domain
     {
         internal ILoggerFactory _loggerFactory;
 
-        public VisionDomainBinding(ILoggerFactory loggerFactory)
+        public VisionDomainBinding(ILoggerFactory loggerFactory, ICognitiveServicesClient client)
         {
             _loggerFactory = loggerFactory;
+            this.Client = client;
         }
 
         public ICognitiveServicesClient Client { get; set; }

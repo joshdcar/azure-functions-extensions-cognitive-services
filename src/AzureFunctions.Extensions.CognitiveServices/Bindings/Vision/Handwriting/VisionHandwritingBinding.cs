@@ -17,9 +17,10 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Handwritin
 
         internal ILoggerFactory _loggerFactory;
         
-        public VisionHandwritingBinding(ILoggerFactory factory)
+        public VisionHandwritingBinding(ILoggerFactory factory, ICognitiveServicesClient client)
         {
             _loggerFactory = factory;
+            this.Client = client;
         }
 
         public void Initialize(ExtensionConfigContext context)
