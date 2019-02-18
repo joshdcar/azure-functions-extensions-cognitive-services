@@ -1,5 +1,6 @@
 ﻿using AzureFunctions.Extensions.CognitiveServices.Config;
 using AzureFunctions.Extensions.CognitiveServices.Services;
+using Microsoft.Azure.WebJobs.Description;
 using Microsoft.Azure.WebJobs.Host.Config;
 using Microsoft.Extensions.Logging;
 using System;
@@ -8,21 +9,25 @@ using System.Text;
 
 namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Describe
 {
+
+    [Extension("VisionDescribe")]
     public class VisionDescribeBinding : IExtensionConfigProvider, IVisionBinding
     {
 
         public ICognitiveServicesClient Client { get; set; }
 
         internal ILoggerFactory _loggerFactory;
-        internal ILogger _log;
 
+        public VisionDescribeBinding(ILoggerFactory loggerFactory, ICognitiveServicesClient client)
+        {
+            _loggerFactory = loggerFactory;
+            this.Client = client;
+        }
 
         public void Initialize(ExtensionConfigContext context)
         {
 
             LoadClient();
-
-            _loggerFactory = context.Config.LoggerFactory ?? throw new ArgumentNullException("Logger Missing");
 
             var visionDescribeRule = context.AddBindingRule<VisionDescribeAttribute>();
 

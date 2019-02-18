@@ -3,8 +3,14 @@ using AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Describe;
 using AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Thumbnail;
 using AzureFunctions.Extensions.CognitiveServices.Config;
 using AzureFunctions.Extensions.CognitiveServices.Services;
+using AzureFunctions.Extensions.CognitiveServices.Tests.Common;
 using AzureFunctions.Extensions.CognitiveServices.Tests.Resources;
 using FluentAssertions;
+using Microsoft.Azure.WebJobs;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -20,14 +26,63 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
         private static VisionDescribeModel visionDescribeImageBytesResult;
         private static VisionDescribeModel visionDescribeImageBytesResizeResult;
 
+        private static readonly TestLoggerProvider _loggerProvider = new TestLoggerProvider();
+
+
+        private static async Task RunTestAsync(string testName, object argument = null)
+        {
+            Type testType = typeof(VisionFunctions);
+            var locator = new ExplicitTypeLocator(testType);
+            ILoggerFactory loggerFactory = new LoggerFactory();
+            loggerFactory.AddProvider(_loggerProvider);
+            ICognitiveServicesClient testCognitiveServicesClient = new TestCognitiveServicesClient();
+
+            var arguments = new Dictionary<string, object>();
+            var resolver = new TestNameResolver();
+
+            IHost host = new HostBuilder()
+                .ConfigureWebJobs(builder =>
+                {
+                    builder.AddVisionDescribe();
+                })
+                .ConfigureServices(services =>
+                {
+                    services.AddSingleton<ICognitiveServicesClient>(testCognitiveServicesClient);
+                    services.AddSingleton<INameResolver>(resolver);
+                    services.AddSingleton<ITypeLocator>(locator);
+                })
+                .ConfigureLogging(logging =>
+                {
+                    logging.ClearProviders();
+                    logging.AddProvider(_loggerProvider);
+                })
+                .ConfigureAppConfiguration(c =>
+                {
+                    c.Sources.Clear();
+
+                    var collection = new Dictionary<string, string>
+                    {
+                        { "VisionKey", "1234XYZ" },
+                        { "VisionUrl", "http://url" }
+                    };
+
+                    c.AddInMemoryCollection(collection);
+                })
+                .Build();
+
+            var method = testType.GetMethod(testName);
+
+            await host.GetJobHost().CallAsync(method, arguments);
+        }
+
 
         [Fact]
         public static async Task TestVisionAnalysisWithUrl()
         {
-            ICognitiveServicesClient client = new TestCognitiveServicesClient();
+            
             var mockResult = JsonConvert.DeserializeObject<VisionDescribeModel>(MockResults.VisionDescribeResults);
 
-            await TestHelper.ExecuteFunction<VisionFunctions, VisionDescribeBinding>(client, "VisionFunctions.VisionDescribeWithUrl");
+            await RunTestAsync("VisionDescribeWithUrl", null);
 
             var expectedResult = JsonConvert.SerializeObject(mockResult);
             var actualResult = JsonConvert.SerializeObject(visionDescribeUrlResult);
@@ -38,10 +93,10 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
         [Fact]
         public static async Task TestVisionDescribeWithImageBytes()
         {
-            ICognitiveServicesClient client = new TestCognitiveServicesClient();
+            
             var mockResult = JsonConvert.DeserializeObject<VisionDescribeModel>(MockResults.VisionDescribeResults);
 
-            await TestHelper.ExecuteFunction<VisionFunctions, VisionDescribeBinding>(client, "VisionFunctions.VisionDescribeWithImageBytes");
+            await RunTestAsync("VisionDescribeWithImageBytes", null);
 
             var expectedResult = JsonConvert.SerializeObject(mockResult);
             var actualResult = JsonConvert.SerializeObject(visionDescribeImageBytesResult);
@@ -52,10 +107,9 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
         [Fact]
         public static async Task TestVisionDescribeWithImageWithResize()
         {
-            ICognitiveServicesClient client = new TestCognitiveServicesClient();
             var mockResult = JsonConvert.DeserializeObject<VisionDescribeModel>(MockResults.VisionDescribeResults);
 
-            await TestHelper.ExecuteFunction<VisionFunctions, VisionDescribeBinding>(client, "VisionFunctions.VisionDescribeWithTooBigImageBytesWithResize");
+            await RunTestAsync("VisionDescribeWithTooBigImageBytesWithResize", null);
 
             var expectedResult = JsonConvert.SerializeObject(mockResult);
             var actualResult = JsonConvert.SerializeObject(visionDescribeImageBytesResizeResult);
@@ -66,12 +120,10 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
         [Fact]
         public static async Task TestVisionDescribeImageBytesTooLarge()
         {
-            ICognitiveServicesClient client = new TestCognitiveServicesClient();
-
+           
             string exceptionMessage = "or smaller for the cognitive service vision API";
 
-            var exception = await Record.ExceptionAsync(() => TestHelper.ExecuteFunction<VisionFunctions, VisionDescribeBinding>
-                        (client, "VisionFunctions.VisionDescribeWithTooBigImageBytes"));
+            var exception = await Record.ExceptionAsync(() => RunTestAsync("VisionDescribeWithTooBigImageBytes", null));
 
             exception.Should().NotBeNull();
             exception.InnerException.Should().NotBeNull();
@@ -84,10 +136,8 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
         [Fact]
         public static async Task TestVisionDescribeMissingFile()
         {
-            ICognitiveServicesClient client = new TestCognitiveServicesClient();
 
-            var exception = await Record.ExceptionAsync(() => TestHelper.ExecuteFunction<VisionFunctions, VisionDescribeBinding>
-                        (client, "VisionFunctions.VisionDescribeMissingFile"));
+            var exception = await Record.ExceptionAsync(() => RunTestAsync("VisionDescribeMissingFile", null));
 
             exception.Should().NotBeNull();
             exception.InnerException.Should().NotBeNull();
@@ -116,6 +166,7 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
                  VisionDescribeClient client)
             {
                 var request = new VisionDescribeRequest();
+                request.ImageBytes = Resources.MockResults.SamplePhoto;
 
                 var result = await client.DescribeAsync(request);
 

@@ -1,5 +1,6 @@
 ﻿using AzureFunctions.Extensions.CognitiveServices.Config;
 using AzureFunctions.Extensions.CognitiveServices.Services;
+using Microsoft.Azure.WebJobs.Description;
 using Microsoft.Azure.WebJobs.Host.Config;
 using Microsoft.Extensions.Logging;
 using System;
@@ -8,22 +9,26 @@ using System.Text;
 
 namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Domain
 {
+
+    [Extension("VisionDomain")]
     public class VisionDomainBinding : IExtensionConfigProvider, IVisionBinding
     {
+        internal ILoggerFactory _loggerFactory;
+
+        public VisionDomainBinding(ILoggerFactory loggerFactory, ICognitiveServicesClient client)
+        {
+            _loggerFactory = loggerFactory;
+            this.Client = client;
+        }
 
         public ICognitiveServicesClient Client { get; set; }
-
-        internal ILoggerFactory _loggerFactory;
-        internal ILogger _log;
-
 
         public void Initialize(ExtensionConfigContext context)
         {
 
             LoadClient();
 
-            _loggerFactory = context.Config.LoggerFactory ?? throw new ArgumentNullException("Logger Missing");
-
+    
             var visionDomainRule = context.AddBindingRule<VisionDomainAttribute>();
 
             visionDomainRule.When(nameof(VisionDomainAttribute.ImageSource), ImageSource.BlobStorage)
@@ -40,7 +45,6 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Domain
 
             visionDomainRule.When(nameof(VisionDomainAttribute.ImageSource), ImageSource.Client)
                 .BindToInput<VisionDomainClient>(attr => new VisionDomainClient(this, attr, _loggerFactory));
-
 
         }
 

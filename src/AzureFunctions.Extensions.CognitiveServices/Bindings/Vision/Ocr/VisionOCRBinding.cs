@@ -1,5 +1,6 @@
 ﻿using AzureFunctions.Extensions.CognitiveServices.Config;
 using AzureFunctions.Extensions.CognitiveServices.Services;
+using Microsoft.Azure.WebJobs.Description;
 using Microsoft.Azure.WebJobs.Host.Config;
 using Microsoft.Extensions.Logging;
 using System;
@@ -8,6 +9,8 @@ using System.Text;
 
 namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Ocr
 {
+
+    [Extension("VisionOcr")]
     public class VisionOcrBinding : IExtensionConfigProvider, IVisionBinding
     {
 
@@ -17,12 +20,16 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Ocr
         internal ILogger _log;
 
 
+        public VisionOcrBinding(ILoggerFactory loggerFactory, ICognitiveServicesClient client)
+        {
+            _loggerFactory = loggerFactory;
+            this.Client = client;
+        }
+
         public void Initialize(ExtensionConfigContext context)
         {
 
             LoadClient();
-
-            _loggerFactory = context.Config.LoggerFactory ?? throw new ArgumentNullException("Logger Missing");
 
             var visionRule = context.AddBindingRule<VisionOcrAttribute>();
 

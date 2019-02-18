@@ -5,7 +5,7 @@
     <DebugType>Full</DebugType>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>1.0.0-preview2</Version>
+    <Version>1.0.0-preview4</Version>
     <Description>Cognitive Services Extensions for Azure Functions</Description>
     <RepositoryUrl>https://github.com/joshdcar/azure-functions-extensions-cognitive-services</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -13,18 +13,15 @@
     <PackageLicenseUrl>https://choosealicense.com/licenses/mit/</PackageLicenseUrl>
     <Copyright>MIT License</Copyright>
     <PackageIconUrl />
-    <PackageReleaseNotes>- Support for additional bindings
-- Autoresize of image support
-- Bug Fixes
+    <PackageReleaseNotes>- Support for Azure Functions 2.0 GA
+- BREAKING CHANGE: Removed custom support for KeyVault as that functionality is now provided within the core Azure Functions framework.
 
 More details visit https://github.com/joshdcar/azure-functions-extensions-cognitive-services</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.KeyVault" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.1.0-preview" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="3.0.0-beta5" />
-    <PackageReference Include="Polly" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions" Version="3.0.1" />
+    <PackageReference Include="Polly" Version="6.1.2" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0004" />
   </ItemGroup>
 

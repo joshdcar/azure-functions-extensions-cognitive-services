@@ -80,5 +80,6 @@ namespace AzureFunctions.Extensions.CognitiveServices.Tests
 
             return Task.FromResult<ServiceResultModel>(result);
         }
+
     }
 }

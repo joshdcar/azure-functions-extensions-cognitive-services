@@ -154,7 +154,6 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Thumbnail
             {
                 Url = attr.VisionUrl ?? operation.Url,
                 Key = attr.VisionKey ?? operation.Key,
-                SecureKey = attr.SecureKey ?? attr.SecureKey,
                 AutoResize = attr.AutoResize,
                 Height = attr.Height,
                 Width = attr.Width,
@@ -164,17 +163,10 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Thumbnail
             };
 
 
-            if (string.IsNullOrEmpty(visionOperation.Key) && string.IsNullOrEmpty(visionOperation.SecureKey))
+            if (string.IsNullOrEmpty(visionOperation.Key))
             {
                 _log.LogWarning(VisionExceptionMessages.KeyMissing);
                 throw new ArgumentException(VisionExceptionMessages.KeyMissing);
-            }
-
-            if (!string.IsNullOrEmpty(visionOperation.SecureKey))
-            {
-                HttpClient httpClient = this._config.Client.GetHttpClientInstance();
-
-                visionOperation.Key = await KeyVaultServices.GetValue(visionOperation.SecureKey, httpClient);
             }
 
             return visionOperation;

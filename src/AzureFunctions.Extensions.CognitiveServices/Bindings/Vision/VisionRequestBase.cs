@@ -44,9 +44,6 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision
         [JsonProperty("key")]
         public string Key { get; set; }
 
-        [JsonProperty("secureKey")]
-        public string SecureKey { get; set; }
-
         [JsonProperty("url")]
         public string Url { get; set; }
 

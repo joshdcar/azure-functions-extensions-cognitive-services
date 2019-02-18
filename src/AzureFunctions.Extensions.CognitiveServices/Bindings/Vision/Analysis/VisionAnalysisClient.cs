@@ -209,29 +209,20 @@ namespace AzureFunctions.Extensions.CognitiveServices.Bindings.Vision.Analysis
         private async Task<VisionAnalysisRequest> MergeProperties(VisionAnalysisRequest operation, IVisionBinding config, VisionAnalysisAttribute attr)
         {
 
-
             var visionOperation = new VisionAnalysisRequest
             {
                 Url = attr.VisionUrl ?? operation.Url,
                 Key = attr.VisionKey ?? operation.Key,
-                SecureKey = attr.SecureKey ?? operation.SecureKey,
                 AutoResize = attr.AutoResize,
                 Options = operation.Options,
                 ImageUrl = string.IsNullOrEmpty(operation.ImageUrl) ? attr.ImageUrl : operation.ImageUrl,
                 ImageBytes = operation.ImageBytes,
             };
 
-            if(string.IsNullOrEmpty(visionOperation.Key) && string.IsNullOrEmpty(visionOperation.SecureKey))
+            if(string.IsNullOrEmpty(visionOperation.Key))
             {
                 _log.LogWarning(VisionExceptionMessages.KeyMissing);
                 throw new ArgumentException(VisionExceptionMessages.KeyMissing);
-            }
-
-            if (!string.IsNullOrEmpty(visionOperation.SecureKey))
-            {
-                HttpClient httpClient = this._config.Client.GetHttpClientInstance();
-
-                visionOperation.Key = await KeyVaultServices.GetValue(visionOperation.SecureKey, httpClient);
             }
 
             return visionOperation;
