@@ -12,7 +12,7 @@ Azure Function Extensions for Cognitive Services is a set of custom Azure Functi
  - Cognitive Service API calls with a couple lines of code
  - Support for automatic retry policies for throttled requests
  - Support for automatic image resize for files larger then 4mb (Cognitive Services Limit)
- - Support for Key Vault storage of Cognitive Services Keys
+ - ~~Support for Key Vault storage of Cognitive Services Keys~~ Removed in Preview 4 as this is now supported in the Azure Functions Platform
  - Exception, Warning, and request time metrics logging
 
 Additional support for the remainder of the Vision offerings and additional support for Language and Knowledge will be coming very soon. 
@@ -21,11 +21,13 @@ More details on the various Cognitive Services offerings can be found at [https:
 
 ### Current Version
 
-Latest Version: 1.0.0-preview3 
+Latest Version: 1.0.0-preview4 
 
-Current Azure Function Dependency:  Microsoft.Azure.Webjobs.Extensions (3.0.0-beta5)
+This release introduced support for Azure Functions 2.0 GA 
 
-**Warning**: There are a lot of previews at play with these bindings. The Bindings themselves are in preview. Azure Functions 2.0 is in preview. Some Cognitive Services are in preview.  ImageSharp, the library used for native .net core image resizing is also in preview.   
+Current Azure Function Dependency:  Microsoft.Azure.Webjobs.Extensions (3.0.1)
+
+**Note**: Some Cognitive Services are in preview.  ImageSharp, the library used for native .net core image resizing is also in preview.   
 
 These bindings currently **only support Azure Functions 2.0** . There are no current plans for 1.x support. 
 
